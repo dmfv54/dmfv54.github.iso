@@ -1,0 +1,146 @@
+!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8' />
+  <title>Open Space Suitability</title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.46.0/mapbox-gl.js'></script>
+  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.46.0/mapbox-gl.css' rel='stylesheet' />
+  <style>
+    body {
+  margin: 0;
+  padding: 0;
+}
+
+h2,
+h3 {
+  margin: 10px;
+  font-size: 1.2em;
+}
+
+h3 {
+  font-size: 3em;
+}
+
+p {
+  font-size: 0.85em;
+  margin: 10px;
+  text-align: left;
+}
+
+/**
+* Create a position for the map
+* on the page */
+#map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+}
+
+/**
+* Set rules for how the map overlays
+* (info box and legend) will be displayed
+* on the page. */
+.map-overlay {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.8);
+  margin-right: 20px;
+  font-family: Arial, sans-serif;
+  overflow: auto;
+  border-radius: 3px;
+}
+
+#features {
+  top: 0;
+  height: 70px;
+  margin-top: 20px;
+  width: 250px;
+}
+
+#legend {
+  padding: 10px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  line-height: 20px;
+  height: 125px;
+  margin-bottom: 40px;
+  width: 110px;
+}
+
+.legend-key {
+  display: inline-block;
+  border-radius: 20%;
+  width: 10px;
+  height: 10px;
+  margin-right: 5px;
+}
+
+  </style>
+</head>
+
+
+<body>
+
+
+<div id='map'></div>
+<div class='map-overlay' id='features'><h2>Suitability Index Score</h2><div id='pd'><p>Hover over an open space!</p></div></div>
+<div class='map-overlay' id='legend'></div>
+
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoiZG1mdjU0IiwiYSI6ImNqa25yenZ2ZTI0Z3ozcHAwOG9wcG8xcjYifQ.YXazi1jbY4V7TYVnrrgNmw';
+const map = new mapboxgl.Map({
+  container: 'map',
+  style: 'mapbox://styles/dmfv54/cjl45hw4q59sq2rlrzon0q8fc',
+  center: [28.951,41.019],
+  zoom: 15.3
+});
+</script>
+
+<script>
+map.on('load', function() {
+
+var colors = ['#FFEDA0', '#FED976', '#FEB24C', '#FD8D3C', '#FC4E2A', '#E31A1C',];
+var layers = ['Very Good', 'Good', 'Moderate','Poor','Very Poor', 'Unsuitable'];
+
+for (i = 0; i < layers.length; i++) {
+  var layer = layers[i];
+  var color = colors[i];
+  var item = document.createElement('div');
+  var key = document.createElement('span');
+  key.className = 'legend-key';
+  key.style.backgroundColor = color;
+
+  var value = document.createElement('span');
+  value.innerHTML = layer;
+  item.appendChild(key);
+  item.appendChild(value);
+  legend.appendChild(item);
+}
+});
+</script>
+
+
+<script>
+map.on('mousemove', function(e) {
+  var suit = map.queryRenderedFeatures(e.point, {
+    layers: ['suitability']
+  });
+
+  if (suit.length > 0) {
+    document.getElementById('pd').innerHTML = '</strong></h3><p><strong><em>' + suit[0].properties.Suitabil_6 + '</strong> /50 </em></p>';
+  } else {
+    document.getElementById('pd').innerHTML = '<p>Hover over an open space!</p>';
+  }
+});
+
+</script>
+
+<script>
+map.getCanvas().style.cursor = 'default';
+map.fitBounds([[28.950,41.014], [28.946,41.029]]);
+</script>
+
+</body>
+</html>
